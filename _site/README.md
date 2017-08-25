@@ -5,9 +5,9 @@ I'm studying natural language processing in the [Computational Linguistics Lab](
 
 Specifically, I've been working on neural network models to label clinical texts with diagnosis codes, especially focusing on their interpretability.
 
-This summer I'm working as a data science intern at [Zappos.com](https://zappos.com) on machine learning problems. 
+In the summer of 2017 I worked as a data science intern at [Zappos.com](https://zappos.com) on machine learning problems, including classifying user behavior using clickstream data. 
 
 I also started writing some thoughts in a <a href="blog.jamesmullenbach.org">blog</a> recently. I'm trying to improve my writing, so I'd love to know your thoughts.
 
 
-<a href="../resume.pdf">Resume</a> <!--(last updated May 19, 2017)-->
+<a href="../resume.pdf">Resume</a> (last updated May 19, 2017)
