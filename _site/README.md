@@ -10,4 +10,4 @@ In the summer of 2017 I worked as a data science intern at [Zappos.com](https://
 I also started writing some thoughts in a <a href="https://jmullenbach.blogspot.com">blog</a> recently. I'm trying to improve my writing, so I'd love to know your thoughts.
 
 
-<a href="../resume.pdf">Resume</a> (last updated December 2016)
+<a href="../resume.pdf">Resume</a> (last updated September 2017)
