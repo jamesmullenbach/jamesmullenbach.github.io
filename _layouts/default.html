@@ -14,25 +14,23 @@
     <body>
       <div class="wrapper">
         <header>
-          <img src="../james.jpg" id="profpic"/>
-            <!--<h1>{{ site.title | default: site.github.repository_name }}</h1>-->
+            <div>
+          {% include portrait.html %}
           <p>{{ site.description | default: site.github.project_tagline }}</p>
-
-          {% if site.github.is_project_page %}
-            <!--p class="view"><a href="{{ site.github.repository_url }}">View the Project on GitHub <small>{{ github_name }}</small></a></p-->
-          {% endif %}
-
-          {% if true %}
-            <ul class="icons">
-												<!--li><a href="https://facebook.com/inretrospectrum" style="display:none"></a></li-->
-												<li><a href="https://github.com/jamesmullenbach">GitHub</a></li>
-												<li><a href="https://linkedin.com/in/jamesmullenbach">LinkedIn</a></li>
-                                                <li><a href="http://blog.jamesmullenbach.org">Blog</a></li>
-											</ul>
-
-            <!--a href="https://github.com/jamesmullenbach" class="fa-github"><span class="label">GitHub</span></a-->
-            <!--p class="view"><a href="{{ site.github.owner_url }}">View My GitHub Profile</a></p-->
-          {% endif %}
+          <table>
+              <tr><td><a href="/">Home</a></td></td>
+              <tr><td><a href="/blog">Blog</a></td></td>
+              <tr><td></td></tr>
+              <tr><td><a href="https://github.com/jamesmullenbach">GitHub</a></td></td>
+              <tr><td><a href="https://linkedin.com/in/jamesmullenbach">LinkedIn</a></td></td>
+              <tr><td><a href="https://twitter.com/jmullenbach_">Twitter</a></td></td>
+          </table>
+            <!--<ul>
+                <li><a href="https://github.com/jamesmullenbach">GitHub</a></li>
+                <li><a href="">LinkedIn</a></li>
+                <li><a href="">Blog</a></li>
+            </ul>-->
+          </div>
 
           {% if site.show_downloads %}
           <ul>
@@ -48,9 +46,6 @@
 
         </section>
         <footer>
-          {% if false %}
-          <p>This project is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
-          {% endif %}
           <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
         </footer>
       </div>
