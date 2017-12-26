@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="chrome=1">
+      <title>jamesmullenbach.github.io by jamesmullenbach</title>
+
+      <link rel="stylesheet" href="/assets/css/style.css?v=4836161fde6911bc0d9c6eb446bfb5b049c5fd24">
+      <meta name="viewport" content="width=device-width">
+      <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+    </head>
+    <body>
+      <div class="wrapper">
+        <header>
+            <div>
+                <!-- <img src="/portrait.jpg" id="profpic" width=50% />
+-->
+          <h2> James Mullenbach </h2>
+          <p></p>
+          <table>
+              <tr><td><a href="/">Home</a></td></tr>
+              <tr><td><a href="/blog">Blog</a></td></tr>
+              <tr><td><a href="../resume.pdf">Resume</a> (as of 12/17)</td></tr>
+              <tr><td></td></tr>
+              <tr><td><a href="https://github.com/jamesmullenbach">GitHub</a></td></tr>
+              <tr><td><a href="https://linkedin.com/in/jamesmullenbach">LinkedIn</a></td></tr>
+              <tr><td><a href="https://twitter.com/jmullenbach_">Twitter</a></td></tr>
+          </table>
+            <!--<ul>
+                <li><a href="https://github.com/jamesmullenbach">GitHub</a></li>
+                <li><a href="">LinkedIn</a></li>
+                <li><a href="">Blog</a></li>
+            </ul>-->
+          </div>
+
+          
+        </header>
+        <section>
+
+        <h1>What I Wish I'd Known Before Starting My First ML Research Project</h1>
+<p class='meta'>26 Dec 2017</p>
+
+<div class='post'>
+    <p>I recently submitted my first long paper to an academic conference, as first author. Here are some of the many things I would tell myself before I started, to make my time spent working on it easier and more productive. In practice, this may mostly function as a list of mistakes I found myself making, and may be specific to the project I worked on, but hopefully I’ve distilled what I learned to a form general enough that others can take something away from this as well.</p>
+
+<h3 id="1-know-your-prior-work">1. Know your prior work.</h3>
+
+<p>Knowing the scope of what research is already out there is vital! I fell into the trap of wanting to get started immediately. It’s way more fun to code up a model than it is to painstakingly go through endless pages of google scholar, refine search terms, read abstracts, and perform the lit review slog, but that must be the first step.</p>
+
+<p>Also, be thorough. Don’t just find a few examples of similar work, try to find <strong>all</strong> recent examples that have some relevance to your approach. This is especially important in machine learning, as you’d better compare to the strongest previous results.
+<!-- Moreover, you need to ensure your data settings are the same, or at least fair. --></p>
+
+<p>It’s also important to keep up-to-date on any new papers on the subject that may come up. Although I believe many venues will consider papers that appear within a certain time frame of the deadline to be contemporaneous, and thus comparison won’t be required, it makes a stronger case to at least know of the most recent attempts at the problem.</p>
+
+<h3 id="2-know-your-metrics">2. Know your metrics.</h3>
+
+<p>One of the issues that I faced which was mostly unnecessary was with evaluation metrics. Do not write your own metrics if you don’t absolutely have to! Before you do, make sure existing implementations from reputable libraries don’t exist already. No, <strong>really, really make sure</strong>. If you really must implement some metric yourself, treat it as the most important part of the code, which it is. Check it 5000x. Better yet, <em>write a unit test!</em></p>
+
+<p>This also ties in to number 1 – you should know which metrics you’re evaluating against early on.</p>
+
+<h3 id="3-keep-your-changes-in-order">3. Keep your changes in order.</h3>
+
+<p>You should keep a well-managed pipeline of experimental changes, large or small, that you make to your approach. It might look like this:</p>
+
+<ol type="a">
+<li>(Optional, depending on the size of the change) Create a branch on Git.</li>
+<li>Document the change in writing. Make a blurb about why you think it will help, what the effects actually were, and whether you will keep or discard the change. I initially used a physical notebook to keep track of this, but later preferred keeping a set of markdown notes on the Git repo, where others can also see them.</li>
+<li><i>Find out why the change helped or didn't help.</i> Don't be afraid to dig into the model specifics (e.g. neural network weights, in my case) to understand what's going on. Diving deep like this could have also helped me discover a few bugs during development much faster.</li>
+<li>Keep track of the results in a google sheet. Even if they are much worse, you will want to reference them in the future.</li>
+</ol>
+
+<p>Also, <em>change only one thing at a time!</em> This is not just better scientific practice, but also helps avoid bad situations where you might attribute a performance boost to the smart and perhaps novel change you made, which was in actuality due to the simple data processing step which you also changed. (Not based on a real example…)</p>
+
+<p>Finally, if you find a bug in your code that could invalidate some prior results, make a note of that in your google sheet that holds your results and hide or move the old results.</p>
+
+<h3 id="4-exercise-good-code-sense">4. Exercise good code sense.</h3>
+
+<p>Use <strong>Jupyter notebooks</strong> for all data processing. I initially wrote a myriad of short scripts to perform each task, like text processing, combining files, and building vocabulary, but this quickly becomes unwieldy. You have to keep track of inputs and outputs very carefully, and there’s no written record of the steps performed by default. Switching to notebooks made changes to data processing 1000% easier, though I kept some more involved steps in scripts to keep the notebooks neat.</p>
+
+<p>For model development, I eventually learned to make heavy use of iPython and pdb, which I sorely needed from the beginning. Even with only very shallow knowledge of both of these tools, I now know that throwing around <code class="highlighter-rouge">pdb.set_trace()</code> in problematic code makes debugging much easier, and iPython magic commands like <code class="highlighter-rouge">%save</code> can be extremely handy.</p>
+
+<p>Other tips, in list form:</p>
+<ol type="a">
+<li>Implement early stopping when you write your training loop</li>
+<li>Saving predictions is more important than saving the model</li>
+<li>Save the <strong>exact command</strong> used to generate the results</li>
+<li>Don't be afraid to delete old code - that's what Git is for!</li>
+<li>Data batching is important, and it should be fast. Batch size must be constant.</li>
+<li>As mentioned before, sometimes it's necessary to get into the nitty-gritty of your model weights to get a sense of what's happening. For neural nets specifically, as there are a wealth of resources on getting the details like initialization and activations right, I won't repeat what I've learned from those but will note that <i>keeping a checklist</i> like <a href="http://theorangeduck.com/page/neural-network-not-working">one</a> of <a href="https://engineering.semantics3.com/debugging-neural-networks-a-checklist-ca52e11151ec">these</a> will be useful.</li>
+</ol>
+
+<h3 id="5-document-everything-in-an-organized-shared-space">5. Document everything in an organized, shared space.</h3>
+
+<p>Your work will more than likely have at least one co-author, so, of course, it’s important that everyone is familiar with the technical details.</p>
+
+<p>Make figures visually describing your model(s) early on, for easy reference.</p>
+
+<p>Start a paper draft early on, if only as a place to TeX up equations that were scratched out on paper or whiteboard during meetings.</p>
+
+<hr />
+
+<p>That’s it for now! Let me know if this has helped you or if you have other tips to add. It would be cool to grow this into a real resource.</p>
+
+
+</div>
+
+
+
+
+        </section>
+        <footer>
+          <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+        </footer>
+      </div>
+      <script src="/assets/js/scale.fix.js"></script>
+
+
+    
+  </body>
+</html>

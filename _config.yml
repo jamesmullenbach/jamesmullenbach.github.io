@@ -1,2 +1,4 @@
 name: James Mullenbach
 theme: jekyll-theme-minimal
+disqus:
+    shortname: jamesmullenbach
