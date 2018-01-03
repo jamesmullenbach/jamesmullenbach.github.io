@@ -186,7 +186,7 @@ Filtering to valid results gives a top 5 of:
 
 Pretty reasonable!
 
-Finally, a machine learning question: Is our projection-based approach this the best way to utilize the finite hypothesis class? There might be legitimate research on this.
+Finally, a machine learning question: Is our projection-based approach the best way to utilize the finite hypothesis class? There might be legitimate research on this.
 
 ## Extensions
 
