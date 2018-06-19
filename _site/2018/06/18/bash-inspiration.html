@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="chrome=1">
+      <title>jamesmullenbach.github.io by jamesmullenbach</title>
+
+      <link rel="stylesheet" href="/assets/css/style.css?v=e98adbc6fbe5c8b2525aeab2d6cda944899b9e7f">
+      <meta name="viewport" content="width=device-width">
+      <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+    </head>
+    <body>
+      <div class="wrapper">
+        <header>
+            <div>
+                <!-- <img src="/portrait.jpg" id="profpic" width=50% />
+-->
+          <h2> James Mullenbach </h2>
+          <p></p>
+          <table>
+              <tr><td><a href="/">Home</a></td></tr>
+              <tr><td><a href="/blog">Blog</a></td></tr>
+              <tr><td><a href="/assets/cv.pdf">CV</a> (as of June '18)</td></tr>
+              <tr><td></td></tr>
+              <tr><td><a href="https://github.com/jamesmullenbach">GitHub</a></td></tr>
+              <tr><td><a href="https://linkedin.com/in/jamesmullenbach">LinkedIn</a></td></tr>
+              <tr><td><a href="https://twitter.com/jmullenbach_">Twitter</a></td></tr>
+          </table>
+            <!--<ul>
+                <li><a href="https://github.com/jamesmullenbach">GitHub</a></li>
+                <li><a href="">LinkedIn</a></li>
+                <li><a href="">Blog</a></li>
+            </ul>-->
+          </div>
+
+          
+        </header>
+        <section>
+
+        <h1>A super easy bash quote-a-day calendar</h1>
+<p class='meta'>18 Jun 2018</p>
+
+<div class='post'>
+    <p>Here’s a cute idea to spice up your days on the command line. Give yourself some regular inspiration, food for thought, or tips and tricks by dishing out a quote each time you open the terminal. This post will show you how you can do this really easily using Python and the Twitter API with zero prior knowledge.</p>
+
+<p>Follow along with the Jupyter Notebook version of this post <a href="https://github.com/jamesmullenbach/twitter-inspo-calendar/blob/master/Twitter%20one-a-day%20calendar.ipynb">here</a>.</p>
+
+<h3 id="1-set-up-your-twitter-api">1: Set up your twitter API</h3>
+
+<p>You’re going to need to set up <a href="https://developer.twitter.com/en/docs/basics/getting-started#get-started-app">a Twitter app</a> (and an account if you don’t have one) to get your credentials for accessing the API. This step will probably take the longest, but it should just be a few minutes.</p>
+
+<p>Once you have them, for our purposes let’s just store them in a JSON file <code class="highlighter-rouge">keys.json</code> like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="p">{</span><span class="w">
+</span><span class="nt">"api_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"api_key_here"</span><span class="p">,</span><span class="w">
+</span><span class="nt">"api_secret"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hello_im_the_api_secret"</span><span class="p">,</span><span class="w">
+</span><span class="nt">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"i_am_a_token"</span><span class="p">,</span><span class="w">
+</span><span class="nt">"token_secret"</span><span class="p">:</span><span class="w"> </span><span class="s2">"token_secret_in_the_building"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+</div>
+
+<p>This is maybe not robust security practice, but should be fine for our personal use. Don’t do anything crazy like put that file on github.</p>
+
+<p>You will also need to <code class="highlighter-rouge">pip install tweepy</code>.</p>
+
+<h3 id="2-scrape-some-tweets">2: Scrape some tweets</h3>
+
+<p>Where should we get our quotes? Twitter can be one great source. I like to use the account <a href="https://twitter.com/codewisdom">CodeWisdom</a> as a source of inspiring, thoughtful quotes about programming and software development in general. One of the other beautiful things about Twitter is the vast amount of pedagogical accounts. The legendary <a href="https://www.johndcook.com/blog/">John D. Cook</a> runs a number of them, like <a href="https://twitter.com/UnixToolTip/">UnixToolTip</a>. Inspired by the <a href="https://en.wikipedia.org/wiki/Spaced_repetition">spaced repetition</a> learning technique, getting some quick tips, tricks, and use cases about unix every day can help you learn some new moves in the command line.</p>
+
+<p>Let’s get all tweets from these two accounts since the beginning of time. Thanks to <code class="highlighter-rouge">tweepy</code>, this is really easy! First, do the boilerplate: load up keys and set up the API object:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">tweepy</span> 
+
+<span class="k">def</span> <span class="nf">load_keys</span><span class="p">(</span><span class="n">key_file</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">key_file</span><span class="p">,</span> <span class="s">'r'</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s">'api_key'</span><span class="p">],</span><span class="n">d</span><span class="p">[</span><span class="s">'api_secret'</span><span class="p">],</span><span class="n">d</span><span class="p">[</span><span class="s">'token'</span><span class="p">],</span><span class="n">d</span><span class="p">[</span><span class="s">'token_secret'</span><span class="p">]</span>
+
+<span class="n">api_key</span><span class="p">,</span> <span class="n">api_secret</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">token_secret</span> <span class="o">=</span> <span class="n">load_keys</span><span class="p">(</span><span class="n">KEY_FILE</span><span class="p">)</span>
+<span class="n">auth</span> <span class="o">=</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">OAuthHandler</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">api_secret</span><span class="p">)</span>
+<span class="n">auth</span><span class="o">.</span><span class="n">set_access_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">token_secret</span><span class="p">)</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">tweepy</span><span class="o">.</span><span class="n">API</span><span class="p">(</span><span class="n">auth</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Now we’ll use tweepy’s <code class="highlighter-rouge">user_timeline</code> method to retrieve all the tweets for a user. Due to rate limits (I’m guessing), only up to 200 tweets can be returned at a time, so to get the whole timeline, we’ll keep sending requests, using the last tweet ID we got as the <code class="highlighter-rouge">max_id</code> input, to let the API know where we want the new results to start. This makes the code a little non-trivial, but hey, we’re not here just to mess around:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_tweets</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">root_user</span><span class="p">):</span>
+    <span class="n">tweets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="c">#get the first set of tweets (you really need a set, because for these accounts some might be repeated)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"sending initial request..."</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">,</span> <span class="n">oldest_id</span> <span class="o">=</span> <span class="n">retrieve_tweets</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">root_user</span><span class="p">)</span>
+    <span class="n">tweets</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+    <span class="c">#now, go back through the remaining history</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"tweets so far: </span><span class="si">%</span><span class="s">d. sending request..."</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">tweets</span><span class="p">))</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">oldest_id</span> <span class="o">=</span> <span class="n">retrieve_tweets</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">root_user</span><span class="p">,</span> <span class="n">max_id</span><span class="o">=</span><span class="n">oldest_id</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tweets</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"total tweets: </span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">tweets</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">tweets</span>
+</code></pre>
+</div>
+
+<p>We also should probably exclude tweets with links and retweets, and we can limit to the most popular tweets if we like.</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">retrieve_tweets</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">root_user</span><span class="p">,</span> <span class="n">max_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">tweets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">user_timeline</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">root_user</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">max_id</span><span class="o">=</span><span class="n">max_id</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="c">#exclude tweets with media</span>
+        <span class="k">if</span> <span class="s">'media'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">entities</span><span class="p">:</span>
+            <span class="c">#exclude replies and RTs (RTs fall under user mentions), tweets with links, and unpopular tweets</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="s">'user_mentions'</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="s">'urls'</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> \
+               <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">favorite_count</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">:</span>
+                <span class="c">#get rid of some html artifacts and put each tweet on one line</span>
+                <span class="n">tweets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">'</span><span class="err">\</span><span class="s">s+'</span><span class="p">,</span> <span class="s">' '</span><span class="p">,</span> <span class="n">hparser</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>
+    <span class="n">oldest_id</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="nb">id</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">tweets</span><span class="p">),</span> <span class="n">oldest_id</span>
+</code></pre>
+</div>
+
+<p>Now we just have to use these methods to scrape and save our tweets to file:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">tweets</span> <span class="o">=</span> <span class="n">get_tweets</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="s">'CodeWisdom'</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'/your/path/here'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">tweet</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tweet</span> <span class="o">+</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="3-update-your-bashrc">3: Update your <code class="highlighter-rouge">.bashrc</code></h3>
+
+<p>Now that we have our adages, aphorisms, maxims, and quotes, just throw this line at the end of your shell startup script and we’re done! Bonus points for adding a pipe into <code class="highlighter-rouge">cowsay</code>.</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>cat ~/tweets1 ~/tweets2 | shuf -n 1
+</code></pre>
+</div>
+
+<p><img src="/assets/wisdom.png" /></p>
+
+<p>Yeehaw!</p>
+
+</div>
+
+<!-- disqus stuff that doesn't work -->
+
+
+
+        </section>
+        <footer>
+          <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+        </footer>
+      </div>
+      <script src="/assets/js/scale.fix.js"></script>
+
+
+    
+  </body>
+</html>
